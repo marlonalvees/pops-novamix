@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import SearchBar from "@/components/SearchBar";
+import PopCard from "@/components/PopCard";
 import { mockPops } from "@/lib/mock-pops";
 
 export default function Home() {
@@ -30,25 +31,17 @@ export default function Home() {
 
       <SearchBar value={query} onChange={setQuery} />
 
-      <ul className="mt-6 flex flex-col gap-2">
-        {resultados.map((pop) => (
-          <li
-            key={pop.slug}
-            className="rounded-lg border border-gray-base/20 bg-white px-4 py-3 text-sm text-gray-text"
-          >
-            <span className="font-medium">{pop.titulo}</span>
-            <span className="ml-2 text-xs text-gray-dark">
-              {pop.categoria}
-            </span>
-          </li>
-        ))}
-
-        {resultados.length === 0 && (
-          <li className="text-sm text-gray-dark py-6 text-center">
-            Nenhum procedimento encontrado para &quot;{query}&quot;.
-          </li>
-        )}
-      </ul>
+      {resultados.length > 0 ? (
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {resultados.map((pop) => (
+            <PopCard key={pop.slug} pop={pop} />
+          ))}
+        </div>
+      ) : (
+        <p className="mt-6 text-sm text-gray-dark py-6 text-center">
+          Nenhum procedimento encontrado para &quot;{query}&quot;.
+        </p>
+      )}
     </main>
   );
 }
