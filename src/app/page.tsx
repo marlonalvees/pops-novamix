@@ -2,23 +2,32 @@
 
 import { useMemo, useState } from "react";
 import SearchBar from "@/components/SearchBar";
+import CategoryFilter from "@/components/CategoryFilter";
 import PopCard from "@/components/PopCard";
 import { mockPops } from "@/lib/mock-pops";
 
 export default function Home() {
   const [query, setQuery] = useState("");
+  const [categoria, setCategoria] = useState<string | null>(null);
+
+  const categorias = useMemo(
+    () => Array.from(new Set(mockPops.map((pop) => pop.categoria))),
+    []
+  );
 
   const resultados = useMemo(() => {
     const termo = query.trim().toLowerCase();
-    if (!termo) return mockPops;
 
     return mockPops.filter((pop) => {
+      if (categoria && pop.categoria !== categoria) return false;
+      if (!termo) return true;
+
       const alvo = [pop.titulo, pop.categoria, ...pop.tags]
         .join(" ")
         .toLowerCase();
       return alvo.includes(termo);
     });
-  }, [query]);
+  }, [query, categoria]);
 
   return (
     <main className="flex-1 w-full max-w-3xl mx-auto px-6 py-10">
@@ -30,6 +39,14 @@ export default function Home() {
       </p>
 
       <SearchBar value={query} onChange={setQuery} />
+
+      <div className="mt-4">
+        <CategoryFilter
+          categorias={categorias}
+          selecionada={categoria}
+          onSelect={setCategoria}
+        />
+      </div>
 
       {resultados.length > 0 ? (
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
