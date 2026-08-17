@@ -63,3 +63,6 @@ Thumbs.db
 # claude code local session data
 .claude/
 .mcp.json
+
+# material de estudo pessoal (não faz parte do projeto)
+GUIA-DE-ESTUDOS.md
