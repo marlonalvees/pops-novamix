@@ -1,5 +1,9 @@
 import type { Pop } from "@/types/pop";
 
+export function getPopBySlug(slug: string): Pop | undefined {
+  return mockPops.find((pop) => pop.slug === slug);
+}
+
 export const mockPops: Pop[] = [
   {
     slug: "papel-preso-impressora",
