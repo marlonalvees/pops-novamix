@@ -4,7 +4,14 @@ import { mockPops } from "@/lib/mock-pops";
 export default function AdminPage() {
   return (
     <main className="flex-1 w-full max-w-4xl mx-auto px-6 py-10">
-      <div className="flex items-center justify-between mb-6">
+      <Link
+        href="https://hub.lojanovamix.com.br"
+        className="text-sm text-gray-dark hover:text-orange-base transition-colors"
+      >
+        ← Voltar
+      </Link>
+
+      <div className="mt-4 flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-semibold text-gray-text">
             Painel administrativo

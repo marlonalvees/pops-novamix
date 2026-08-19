@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import PopForm from "@/components/admin/PopForm";
 
@@ -13,7 +14,14 @@ export default function NovoPopPage() {
 
   return (
     <main className="flex-1 w-full max-w-2xl mx-auto px-6 py-10">
-      <h1 className="text-2xl font-semibold text-gray-text mb-6">
+      <Link
+        href="https://hub.lojanovamix.com.br"
+        className="text-sm text-gray-dark hover:text-orange-base transition-colors"
+      >
+        ← Voltar
+      </Link>
+
+      <h1 className="mt-4 text-2xl font-semibold text-gray-text mb-6">
         Novo POP
       </h1>
 
