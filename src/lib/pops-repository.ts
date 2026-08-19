@@ -155,7 +155,11 @@ async function gerarSlugUnico(client: PoolClient, titulo: string): Promise<strin
   }
 }
 
-export async function createPop(input: PopInput, arquivos: ArquivoPasso[]): Promise<string> {
+export async function createPop(
+  input: PopInput,
+  arquivos: ArquivoPasso[],
+  userHubId: number | null
+): Promise<string> {
   const client = await db.connect();
   let slug: string | undefined;
 
@@ -166,9 +170,9 @@ export async function createPop(input: PopInput, arquivos: ArquivoPasso[]): Prom
     slug = await gerarSlugUnico(client, input.titulo);
 
     const popResult = await client.query(
-      `INSERT INTO pops.pops (slug, titulo, categoria_id, video_url)
-       VALUES ($1, $2, $3, $4) RETURNING id`,
-      [slug, input.titulo, categoria.id, input.videoUrl || null]
+      `INSERT INTO pops.pops (slug, titulo, categoria_id, video_url, user_hub_id)
+       VALUES ($1, $2, $3, $4, $5) RETURNING id`,
+      [slug, input.titulo, categoria.id, input.videoUrl || null, userHubId]
     );
     const popId = popResult.rows[0].id;
 

@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const slug = await createPop(input.dados, input.arquivos);
+    const slug = await createPop(input.dados, input.arquivos, payload?.sub ?? null);
     return NextResponse.json({ slug }, { status: 201 });
   } catch (error) {
     console.error(error);
