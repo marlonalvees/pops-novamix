@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAuthPayload } from "@/lib/auth";
-import { getPopBySlug, listCategorias } from "@/lib/pops-repository";
+import { getPopBySlug, listCategorias, listTags } from "@/lib/pops-repository";
 import EditPopClient from "@/components/admin/EditPopClient";
 
 type EditPopPageProps = {
@@ -20,6 +20,7 @@ export default async function EditPopPage({ params }: EditPopPageProps) {
   const isGlobalAdmin = payload?.role === "admin";
   const categoriaFixa = isGlobalAdmin ? null : payload?.sector?.name ?? null;
   const categoriasDisponiveis = isGlobalAdmin ? await listCategorias() : [];
+  const tagsDisponiveis = await listTags();
 
   return (
     <main className="flex-1 w-full max-w-2xl mx-auto px-6 py-10">
@@ -38,6 +39,7 @@ export default async function EditPopPage({ params }: EditPopPageProps) {
         pop={pop}
         categoriaFixa={categoriaFixa}
         categoriasDisponiveis={categoriasDisponiveis}
+        tagsDisponiveis={tagsDisponiveis}
       />
     </main>
   );

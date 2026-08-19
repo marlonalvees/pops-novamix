@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getAuthPayload } from "@/lib/auth";
-import { listCategorias } from "@/lib/pops-repository";
+import { listCategorias, listTags } from "@/lib/pops-repository";
 import NovoPopClient from "@/components/admin/NovoPopClient";
 
 export default async function NovoPopPage() {
@@ -8,6 +8,7 @@ export default async function NovoPopPage() {
   const isGlobalAdmin = payload?.role === "admin";
   const categoriaFixa = isGlobalAdmin ? null : payload?.sector?.name ?? null;
   const categoriasDisponiveis = isGlobalAdmin ? await listCategorias() : [];
+  const tagsDisponiveis = await listTags();
 
   return (
     <main className="flex-1 w-full max-w-2xl mx-auto px-6 py-10">
@@ -22,7 +23,11 @@ export default async function NovoPopPage() {
         Novo POP
       </h1>
 
-      <NovoPopClient categoriaFixa={categoriaFixa} categoriasDisponiveis={categoriasDisponiveis} />
+      <NovoPopClient
+        categoriaFixa={categoriaFixa}
+        categoriasDisponiveis={categoriasDisponiveis}
+        tagsDisponiveis={tagsDisponiveis}
+      />
     </main>
   );
 }

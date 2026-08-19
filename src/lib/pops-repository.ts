@@ -14,6 +14,11 @@ export async function listCategorias() {
   return result.rows as { id: number; nome: string; slug: string }[];
 }
 
+export async function listTags() {
+  const result = await db.query(`SELECT id, nome FROM pops.tags ORDER BY nome`);
+  return result.rows as { id: number; nome: string }[];
+}
+
 export async function listPops(
   opts: { categoria?: string; includeInactive?: boolean } = {}
 ): Promise<PopResumo[]> {

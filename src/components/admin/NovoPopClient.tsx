@@ -7,11 +7,13 @@ import PopForm from "@/components/admin/PopForm";
 type NovoPopClientProps = {
   categoriaFixa: string | null;
   categoriasDisponiveis: { id: number; nome: string }[];
+  tagsDisponiveis: { id: number; nome: string }[];
 };
 
 export default function NovoPopClient({
   categoriaFixa,
   categoriasDisponiveis,
+  tagsDisponiveis,
 }: NovoPopClientProps) {
   const router = useRouter();
   const [erro, setErro] = useState<string | null>(null);
@@ -37,6 +39,7 @@ export default function NovoPopClient({
       <PopForm
         categoriaFixa={categoriaFixa}
         categoriasDisponiveis={categoriasDisponiveis}
+        tagsDisponiveis={tagsDisponiveis}
         submitLabel="Cadastrar"
         onSubmit={handleSubmit}
       />

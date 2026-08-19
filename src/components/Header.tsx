@@ -33,7 +33,7 @@ export default async function Header() {
           )}
           <a
             href="https://hub.lojanovamix.com.br"
-            className="hover:text-orange-base transition-colors"
+            className="rounded-md bg-red-base px-3 py-1.5 text-xs font-medium text-white hover:bg-red-light transition"
           >
             Hub Novamix
           </a>

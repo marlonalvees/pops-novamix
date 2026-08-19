@@ -17,6 +17,7 @@ type PopFormProps = {
   initialValues?: Pop;
   categoriaFixa: string | null;
   categoriasDisponiveis: { id: number; nome: string }[];
+  tagsDisponiveis: { id: number; nome: string }[];
   submitLabel: string;
   onSubmit: (formData: FormData) => void | Promise<void>;
 };
@@ -38,12 +39,14 @@ export default function PopForm({
   initialValues,
   categoriaFixa,
   categoriasDisponiveis,
+  tagsDisponiveis,
   submitLabel,
   onSubmit,
 }: PopFormProps) {
   const [titulo, setTitulo] = useState(initialValues?.titulo ?? "");
   const [categoria, setCategoria] = useState(categoriaFixa ?? initialValues?.categoria ?? "");
-  const [tagsTexto, setTagsTexto] = useState(initialValues?.tags.join(", ") ?? "");
+  const [tagsSelecionadas, setTagsSelecionadas] = useState<string[]>(initialValues?.tags ?? []);
+  const [novaTag, setNovaTag] = useState("");
   const [videoUrl, setVideoUrl] = useState(initialValues?.videoUrl ?? "");
   const [passos, setPassos] = useState<PassoState[]>(passosIniciais(initialValues));
   const [enviando, setEnviando] = useState(false);
@@ -82,6 +85,23 @@ export default function PopForm({
     });
   }
 
+  function alternarTag(nome: string) {
+    setTagsSelecionadas((atual) =>
+      atual.includes(nome) ? atual.filter((t) => t !== nome) : [...atual, nome]
+    );
+  }
+
+  function adicionarNovaTag() {
+    const nome = novaTag.trim();
+    if (!nome || tagsSelecionadas.includes(nome)) return;
+    setTagsSelecionadas((atual) => [...atual, nome]);
+    setNovaTag("");
+  }
+
+  const todasAsTags = Array.from(
+    new Set([...tagsDisponiveis.map((t) => t.nome), ...tagsSelecionadas])
+  ).sort((a, b) => a.localeCompare(b));
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -94,7 +114,7 @@ export default function PopForm({
     const formData = new FormData();
     formData.append("titulo", titulo);
     formData.append("categoria", categoria);
-    formData.append("tags", tagsTexto);
+    formData.append("tags", tagsSelecionadas.join(","));
     formData.append("videoUrl", videoUrl);
     formData.append(
       "passos",
@@ -169,19 +189,56 @@ export default function PopForm({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-text mb-1">
-          Tags (separadas por vírgula)
+        <label className="block text-sm font-medium text-gray-text mb-2">
+          Tags
         </label>
-        <Input
-          value={tagsTexto}
-          onChange={(e) => setTagsTexto(e.target.value)}
-          placeholder="Ex: impressora, papel, atolado"
-        />
+        <div className="flex flex-wrap gap-2">
+          {todasAsTags.map((nome) => {
+            const selecionada = tagsSelecionadas.includes(nome);
+            return (
+              <button
+                key={nome}
+                type="button"
+                onClick={() => alternarTag(nome)}
+                className={`rounded-full px-3 py-1 text-xs font-medium transition ${
+                  selecionada
+                    ? "bg-orange-base text-white"
+                    : "bg-gray text-gray-dark border border-gray-base/30 hover:border-orange-base"
+                }`}
+              >
+                {nome}
+              </button>
+            );
+          })}
+          {todasAsTags.length === 0 && (
+            <p className="text-xs text-gray-dark">Nenhuma tag cadastrada ainda.</p>
+          )}
+        </div>
+        <div className="mt-2 flex gap-2">
+          <Input
+            value={novaTag}
+            onChange={(e) => setNovaTag(e.target.value)}
+            placeholder="Nova tag"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                adicionarNovaTag();
+              }
+            }}
+          />
+          <button
+            type="button"
+            onClick={adicionarNovaTag}
+            className="shrink-0 text-sm font-medium text-orange-base hover:underline"
+          >
+            + Adicionar
+          </button>
+        </div>
       </div>
 
       <div>
         <label className="block text-sm font-medium text-gray-text mb-1">
-          Link do vídeo (YouTube)
+          Link do vídeo (YouTube) — opcional
         </label>
         <Input
           value={videoUrl}
