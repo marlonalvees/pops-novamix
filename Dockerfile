@@ -23,5 +23,9 @@ RUN npm ci --omit=dev
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 
+# Pasta onde as imagens dos passos dos POPs são salvas em runtime.
+# Persistida via volume no docker-compose para sobreviver a rebuilds.
+RUN mkdir -p src/imagens
+
 EXPOSE 3000
 CMD ["npm", "start"]

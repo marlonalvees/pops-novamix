@@ -17,6 +17,9 @@
 /.next/
 /out/
 
+# imagens dos passos dos POPs, enviadas em runtime pelo painel admin
+/src/imagens/
+
 # production
 /build
 

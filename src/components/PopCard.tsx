@@ -1,8 +1,8 @@
 import Link from "next/link";
-import type { Pop } from "@/types/pop";
+import type { PopResumo } from "@/types/pop";
 
 type PopCardProps = {
-  pop: Pop;
+  pop: PopResumo;
 };
 
 export default function PopCard({ pop }: PopCardProps) {

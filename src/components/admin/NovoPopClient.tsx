@@ -3,25 +3,23 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import PopForm from "@/components/admin/PopForm";
-import type { Pop } from "@/types/pop";
 
-type EditPopClientProps = {
-  pop: Pop;
+type NovoPopClientProps = {
   categoriaFixa: string | null;
 };
 
-export default function EditPopClient({ pop, categoriaFixa }: EditPopClientProps) {
+export default function NovoPopClient({ categoriaFixa }: NovoPopClientProps) {
   const router = useRouter();
   const [erro, setErro] = useState<string | null>(null);
 
   async function handleSubmit(formData: FormData) {
     setErro(null);
 
-    const res = await fetch(`/api/pops/${pop.slug}`, { method: "PUT", body: formData });
+    const res = await fetch("/api/pops", { method: "POST", body: formData });
 
     if (!res.ok) {
       const data = await res.json().catch(() => null);
-      setErro(data?.error ?? "Erro ao salvar alterações.");
+      setErro(data?.error ?? "Erro ao cadastrar POP.");
       return;
     }
 
@@ -32,12 +30,7 @@ export default function EditPopClient({ pop, categoriaFixa }: EditPopClientProps
   return (
     <>
       {erro && <p className="mb-4 text-sm text-red-base">{erro}</p>}
-      <PopForm
-        initialValues={pop}
-        categoriaFixa={categoriaFixa}
-        submitLabel="Salvar alterações"
-        onSubmit={handleSubmit}
-      />
+      <PopForm categoriaFixa={categoriaFixa} submitLabel="Cadastrar" onSubmit={handleSubmit} />
     </>
   );
 }

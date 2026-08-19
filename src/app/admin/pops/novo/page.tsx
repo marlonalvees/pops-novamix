@@ -1,16 +1,11 @@
-"use client";
-
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import PopForm from "@/components/admin/PopForm";
+import { getAuthPayload } from "@/lib/auth";
+import NovoPopClient from "@/components/admin/NovoPopClient";
 
-export default function NovoPopPage() {
-  const router = useRouter();
-
-  function handleSubmit() {
-    // TODO: salvar no Supabase quando o backend estiver conectado.
-    router.push("/admin");
-  }
+export default async function NovoPopPage() {
+  const payload = await getAuthPayload();
+  const isGlobalAdmin = payload?.role === "admin";
+  const categoriaFixa = isGlobalAdmin ? null : payload?.sector?.name ?? null;
 
   return (
     <main className="flex-1 w-full max-w-2xl mx-auto px-6 py-10">
@@ -25,7 +20,7 @@ export default function NovoPopPage() {
         Novo POP
       </h1>
 
-      <PopForm submitLabel="Cadastrar" onSubmit={handleSubmit} />
+      <NovoPopClient categoriaFixa={categoriaFixa} />
     </main>
   );
 }

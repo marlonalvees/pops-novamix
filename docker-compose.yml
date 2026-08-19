@@ -8,4 +8,9 @@ services:
       - .env
     environment:
       - NODE_ENV=production
+    volumes:
+      - pops_imagens:/app/src/imagens
     restart: unless-stopped
+
+volumes:
+  pops_imagens:

@@ -1,7 +1,15 @@
 import Link from "next/link";
-import { mockPops } from "@/lib/mock-pops";
+import { getAuthPayload } from "@/lib/auth";
+import { listPops } from "@/lib/pops-repository";
+import DeletePopButton from "@/components/admin/DeletePopButton";
 
-export default function AdminPage() {
+export default async function AdminPage() {
+  const payload = await getAuthPayload();
+  const isGlobalAdmin = payload?.role === "admin";
+  const categoria = isGlobalAdmin ? undefined : payload?.sector?.name;
+
+  const pops = await listPops({ categoria, includeInactive: true });
+
   return (
     <main className="flex-1 w-full max-w-4xl mx-auto px-6 py-10">
       <Link
@@ -17,7 +25,8 @@ export default function AdminPage() {
             Painel administrativo
           </h1>
           <p className="text-sm text-gray-dark mt-1">
-            {mockPops.length} procedimento(s) cadastrado(s).
+            {pops.length} procedimento(s) cadastrado(s)
+            {categoria ? ` no setor ${categoria}` : ""}.
           </p>
         </div>
 
@@ -39,7 +48,7 @@ export default function AdminPage() {
             </tr>
           </thead>
           <tbody>
-            {mockPops.map((pop) => (
+            {pops.map((pop) => (
               <tr
                 key={pop.slug}
                 className="border-b border-gray-base/10 last:border-0"
@@ -58,12 +67,7 @@ export default function AdminPage() {
                     >
                       Editar
                     </Link>
-                    <button
-                      type="button"
-                      className="rounded-md px-3 py-1.5 text-xs font-medium border border-red-base/30 text-red-base hover:bg-red-base hover:text-white transition"
-                    >
-                      Excluir
-                    </button>
+                    <DeletePopButton slug={pop.slug} titulo={pop.titulo} />
                   </div>
                 </td>
               </tr>

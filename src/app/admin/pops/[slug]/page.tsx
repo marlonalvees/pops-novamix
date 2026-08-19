@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getPopBySlug } from "@/lib/mock-pops";
+import { getAuthPayload } from "@/lib/auth";
+import { getPopBySlug } from "@/lib/pops-repository";
 import EditPopClient from "@/components/admin/EditPopClient";
 
 type EditPopPageProps = {
@@ -9,11 +10,15 @@ type EditPopPageProps = {
 
 export default async function EditPopPage({ params }: EditPopPageProps) {
   const { slug } = await params;
-  const pop = getPopBySlug(slug);
+  const pop = await getPopBySlug(slug, { includeInactive: true });
 
   if (!pop) {
     notFound();
   }
+
+  const payload = await getAuthPayload();
+  const isGlobalAdmin = payload?.role === "admin";
+  const categoriaFixa = isGlobalAdmin ? null : payload?.sector?.name ?? null;
 
   return (
     <main className="flex-1 w-full max-w-2xl mx-auto px-6 py-10">
@@ -28,7 +33,7 @@ export default async function EditPopPage({ params }: EditPopPageProps) {
         Editar: {pop.titulo}
       </h1>
 
-      <EditPopClient pop={pop} />
+      <EditPopClient pop={pop} categoriaFixa={categoriaFixa} />
     </main>
   );
 }

@@ -1,64 +1,10 @@
-"use client";
+import HomeClient from "@/components/HomeClient";
+import { listCategorias, listPops } from "@/lib/pops-repository";
 
-import { useMemo, useState } from "react";
-import SearchBar from "@/components/SearchBar";
-import CategoryFilter from "@/components/CategoryFilter";
-import PopCard from "@/components/PopCard";
-import { mockPops } from "@/lib/mock-pops";
+export const dynamic = "force-dynamic";
 
-export default function Home() {
-  const [query, setQuery] = useState("");
-  const [categoria, setCategoria] = useState<string | null>(null);
+export default async function Home() {
+  const [pops, categorias] = await Promise.all([listPops(), listCategorias()]);
 
-  const categorias = useMemo(
-    () => Array.from(new Set(mockPops.map((pop) => pop.categoria))),
-    []
-  );
-
-  const resultados = useMemo(() => {
-    const termo = query.trim().toLowerCase();
-
-    return mockPops.filter((pop) => {
-      if (categoria && pop.categoria !== categoria) return false;
-      if (!termo) return true;
-
-      const alvo = [pop.titulo, pop.categoria, ...pop.tags]
-        .join(" ")
-        .toLowerCase();
-      return alvo.includes(termo);
-    });
-  }, [query, categoria]);
-
-  return (
-    <main className="flex-1 w-full max-w-3xl mx-auto px-6 py-10">
-      <h1 className="text-2xl font-semibold text-gray-text mb-1">
-        Como podemos ajudar?
-      </h1>
-      <p className="text-sm text-gray-dark mb-6">
-        Busque pelo procedimento ou problema que você está enfrentando.
-      </p>
-
-      <SearchBar value={query} onChange={setQuery} />
-
-      <div className="mt-4">
-        <CategoryFilter
-          categorias={categorias}
-          selecionada={categoria}
-          onSelect={setCategoria}
-        />
-      </div>
-
-      {resultados.length > 0 ? (
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {resultados.map((pop) => (
-            <PopCard key={pop.slug} pop={pop} />
-          ))}
-        </div>
-      ) : (
-        <p className="mt-6 text-sm text-gray-dark py-6 text-center">
-          Nenhum procedimento encontrado para &quot;{query}&quot;.
-        </p>
-      )}
-    </main>
-  );
+  return <HomeClient pops={pops} categorias={categorias.map((c) => c.nome)} />;
 }
