@@ -8,9 +8,14 @@ import type { Pop } from "@/types/pop";
 type EditPopClientProps = {
   pop: Pop;
   categoriaFixa: string | null;
+  categoriasDisponiveis: { id: number; nome: string }[];
 };
 
-export default function EditPopClient({ pop, categoriaFixa }: EditPopClientProps) {
+export default function EditPopClient({
+  pop,
+  categoriaFixa,
+  categoriasDisponiveis,
+}: EditPopClientProps) {
   const router = useRouter();
   const [erro, setErro] = useState<string | null>(null);
 
@@ -35,6 +40,7 @@ export default function EditPopClient({ pop, categoriaFixa }: EditPopClientProps
       <PopForm
         initialValues={pop}
         categoriaFixa={categoriaFixa}
+        categoriasDisponiveis={categoriasDisponiveis}
         submitLabel="Salvar alterações"
         onSubmit={handleSubmit}
       />

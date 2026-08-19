@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getAuthPayload, HUB_LOGIN_URL, isPopsAdmin } from "@/lib/auth";
+import AdminNav from "@/components/admin/AdminNav";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const payload = await getAuthPayload();
@@ -20,5 +21,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     );
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      <AdminNav isGlobalAdmin={payload.role === "admin"} />
+      {children}
+    </>
+  );
 }

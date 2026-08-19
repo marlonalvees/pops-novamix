@@ -16,6 +16,7 @@ type PassoState = {
 type PopFormProps = {
   initialValues?: Pop;
   categoriaFixa: string | null;
+  categoriasDisponiveis: { id: number; nome: string }[];
   submitLabel: string;
   onSubmit: (formData: FormData) => void | Promise<void>;
 };
@@ -36,6 +37,7 @@ function passosIniciais(pop?: Pop): PassoState[] {
 export default function PopForm({
   initialValues,
   categoriaFixa,
+  categoriasDisponiveis,
   submitLabel,
   onSubmit,
 }: PopFormProps) {
@@ -140,17 +142,29 @@ export default function PopForm({
         <label className="block text-sm font-medium text-gray-text mb-1">
           Categoria
         </label>
-        <Input
-          value={categoria}
-          onChange={(e) => setCategoria(e.target.value)}
-          placeholder="Ex: Impressora"
-          required
-          disabled={!!categoriaFixa}
-        />
-        {categoriaFixa && (
-          <p className="mt-1 text-xs text-gray-dark">
-            Fixada no setor do seu usuário.
-          </p>
+        {categoriaFixa ? (
+          <>
+            <Input value={categoria} disabled />
+            <p className="mt-1 text-xs text-gray-dark">
+              Fixada no setor do seu usuário.
+            </p>
+          </>
+        ) : (
+          <select
+            value={categoria}
+            onChange={(e) => setCategoria(e.target.value)}
+            required
+            className="w-full rounded-md border border-gray-base bg-white px-3 py-2 text-sm text-gray-text outline-none focus:border-orange-base focus:ring-1 focus:ring-orange-base"
+          >
+            <option value="" disabled>
+              Selecione uma categoria
+            </option>
+            {categoriasDisponiveis.map((c) => (
+              <option key={c.id} value={c.nome}>
+                {c.nome}
+              </option>
+            ))}
+          </select>
         )}
       </div>
 

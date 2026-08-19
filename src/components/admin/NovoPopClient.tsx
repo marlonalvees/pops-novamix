@@ -6,9 +6,13 @@ import PopForm from "@/components/admin/PopForm";
 
 type NovoPopClientProps = {
   categoriaFixa: string | null;
+  categoriasDisponiveis: { id: number; nome: string }[];
 };
 
-export default function NovoPopClient({ categoriaFixa }: NovoPopClientProps) {
+export default function NovoPopClient({
+  categoriaFixa,
+  categoriasDisponiveis,
+}: NovoPopClientProps) {
   const router = useRouter();
   const [erro, setErro] = useState<string | null>(null);
 
@@ -30,7 +34,12 @@ export default function NovoPopClient({ categoriaFixa }: NovoPopClientProps) {
   return (
     <>
       {erro && <p className="mb-4 text-sm text-red-base">{erro}</p>}
-      <PopForm categoriaFixa={categoriaFixa} submitLabel="Cadastrar" onSubmit={handleSubmit} />
+      <PopForm
+        categoriaFixa={categoriaFixa}
+        categoriasDisponiveis={categoriasDisponiveis}
+        submitLabel="Cadastrar"
+        onSubmit={handleSubmit}
+      />
     </>
   );
 }
