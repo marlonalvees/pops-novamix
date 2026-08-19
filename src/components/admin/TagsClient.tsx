@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useMemo, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
@@ -14,11 +14,18 @@ type TagsClientProps = {
 export default function TagsClient({ tagsIniciais }: TagsClientProps) {
   const router = useRouter();
   const [tags, setTags] = useState(tagsIniciais);
+  const [busca, setBusca] = useState("");
   const [novoNome, setNovoNome] = useState("");
   const [editandoId, setEditandoId] = useState<number | null>(null);
   const [nomeEditado, setNomeEditado] = useState("");
   const [erro, setErro] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
+
+  const tagsFiltradas = useMemo(() => {
+    const termo = busca.trim().toLowerCase();
+    if (!termo) return tags;
+    return tags.filter((t) => t.nome.toLowerCase().includes(termo));
+  }, [tags, busca]);
 
   async function criar(event: FormEvent) {
     event.preventDefault();
@@ -97,8 +104,14 @@ export default function TagsClient({ tagsIniciais }: TagsClientProps) {
 
       {erro && <p className="text-sm text-red-base">{erro}</p>}
 
+      <Input
+        value={busca}
+        onChange={(e) => setBusca(e.target.value)}
+        placeholder="Buscar tag..."
+      />
+
       <ul className="flex flex-wrap gap-2">
-        {tags.map((tag) => (
+        {tagsFiltradas.map((tag) => (
           <li
             key={tag.id}
             className="flex items-center gap-2 rounded-full border border-gray-base/20 bg-white pl-3 pr-2 py-1"
@@ -146,7 +159,11 @@ export default function TagsClient({ tagsIniciais }: TagsClientProps) {
             )}
           </li>
         ))}
-        {tags.length === 0 && <p className="text-sm text-gray-dark">Nenhuma tag cadastrada ainda.</p>}
+        {tagsFiltradas.length === 0 && (
+          <p className="text-sm text-gray-dark">
+            {busca ? `Nenhuma tag encontrada para "${busca}".` : "Nenhuma tag cadastrada ainda."}
+          </p>
+        )}
       </ul>
     </div>
   );

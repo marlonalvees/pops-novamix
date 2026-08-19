@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useMemo, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
@@ -14,11 +14,18 @@ type CategoriasClientProps = {
 export default function CategoriasClient({ categoriasIniciais }: CategoriasClientProps) {
   const router = useRouter();
   const [categorias, setCategorias] = useState(categoriasIniciais);
+  const [busca, setBusca] = useState("");
   const [novoNome, setNovoNome] = useState("");
   const [editandoId, setEditandoId] = useState<number | null>(null);
   const [nomeEditado, setNomeEditado] = useState("");
   const [erro, setErro] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
+
+  const categoriasFiltradas = useMemo(() => {
+    const termo = busca.trim().toLowerCase();
+    if (!termo) return categorias;
+    return categorias.filter((c) => c.nome.toLowerCase().includes(termo));
+  }, [categorias, busca]);
 
   async function criar(event: FormEvent) {
     event.preventDefault();
@@ -97,8 +104,14 @@ export default function CategoriasClient({ categoriasIniciais }: CategoriasClien
 
       {erro && <p className="text-sm text-red-base">{erro}</p>}
 
+      <Input
+        value={busca}
+        onChange={(e) => setBusca(e.target.value)}
+        placeholder="Buscar categoria..."
+      />
+
       <ul className="flex flex-col gap-2">
-        {categorias.map((categoria) => (
+        {categoriasFiltradas.map((categoria) => (
           <li
             key={categoria.id}
             className="flex items-center gap-2 rounded-lg border border-gray-base/20 bg-white px-4 py-2"
@@ -138,8 +151,12 @@ export default function CategoriasClient({ categoriasIniciais }: CategoriasClien
             )}
           </li>
         ))}
-        {categorias.length === 0 && (
-          <p className="text-sm text-gray-dark">Nenhuma categoria cadastrada ainda.</p>
+        {categoriasFiltradas.length === 0 && (
+          <p className="text-sm text-gray-dark">
+            {busca
+              ? `Nenhuma categoria encontrada para "${busca}".`
+              : "Nenhuma categoria cadastrada ainda."}
+          </p>
         )}
       </ul>
     </div>
