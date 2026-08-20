@@ -75,7 +75,7 @@ export async function getPopBySlug(
   );
 
   const passosResult = await db.query(
-    `SELECT id, ordem, descricao FROM pops.passos WHERE pop_id = $1 ORDER BY ordem`,
+    `SELECT id, ordem, descricao, informacoes_extras FROM pops.passos WHERE pop_id = $1 ORDER BY ordem`,
     [popRow.id]
   );
 
@@ -112,6 +112,7 @@ export async function getPopBySlug(
     passos: passosResult.rows.map((p) => ({
       id: p.id,
       descricao: p.descricao,
+      informacoesExtras: p.informacoes_extras,
       imagens: imagensPorPasso.get(p.id) ?? [],
     })),
   };
@@ -192,8 +193,8 @@ export async function createPop(
     const passoIds: number[] = [];
     for (let i = 0; i < input.passos.length; i++) {
       const result = await client.query(
-        `INSERT INTO pops.passos (pop_id, ordem, descricao) VALUES ($1, $2, $3) RETURNING id`,
-        [popId, i + 1, input.passos[i].descricao]
+        `INSERT INTO pops.passos (pop_id, ordem, descricao, informacoes_extras) VALUES ($1, $2, $3, $4) RETURNING id`,
+        [popId, i + 1, input.passos[i].descricao, input.passos[i].informacoesExtras || null]
       );
       passoIds.push(result.rows[0].id);
     }
@@ -295,8 +296,8 @@ export async function updatePop(
 
       if (passo.id) {
         await client.query(
-          `UPDATE pops.passos SET descricao = $1, ordem = $2 WHERE id = $3`,
-          [passo.descricao, i + 1, passo.id]
+          `UPDATE pops.passos SET descricao = $1, ordem = $2, informacoes_extras = $3 WHERE id = $4`,
+          [passo.descricao, i + 1, passo.informacoesExtras || null, passo.id]
         );
         passoIds.push(passo.id);
 
@@ -316,8 +317,8 @@ export async function updatePop(
         }
       } else {
         const result = await client.query(
-          `INSERT INTO pops.passos (pop_id, ordem, descricao) VALUES ($1, $2, $3) RETURNING id`,
-          [popId, i + 1, passo.descricao]
+          `INSERT INTO pops.passos (pop_id, ordem, descricao, informacoes_extras) VALUES ($1, $2, $3, $4) RETURNING id`,
+          [popId, i + 1, passo.descricao, passo.informacoesExtras || null]
         );
         passoIds.push(result.rows[0].id);
       }

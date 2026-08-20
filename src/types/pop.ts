@@ -8,6 +8,7 @@ export type PopImagem = {
 export type PopPasso = {
   id?: number;
   descricao: string;
+  informacoesExtras: string | null;
   imagens: PopImagem[];
 };
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { PopPasso } from "@/types/pop";
 
 type PassoAPassoProps = {
@@ -27,6 +27,16 @@ function ChevronIcon({ direction }: { direction: "down" | "up" }) {
 
 export function PassoAPasso({ passos }: PassoAPassoProps) {
   const [aberto, setAberto] = useState(false);
+  const [imagemAmpliada, setImagemAmpliada] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!imagemAmpliada) return;
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setImagemAmpliada(null);
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [imagemAmpliada]);
 
   return (
     <section className="mt-8">
@@ -68,10 +78,16 @@ export function PassoAPasso({ passos }: PassoAPassoProps) {
                           key={imagem.id}
                           src={imagem.url}
                           alt={imagem.legenda ?? `Imagem do passo ${index + 1}`}
-                          className="w-full max-w-lg rounded-lg border border-gray-base/20 object-contain"
+                          onClick={() => setImagemAmpliada(imagem.url)}
+                          className="w-full max-w-lg cursor-zoom-in rounded-lg border border-gray-base/20 object-contain transition hover:opacity-90"
                         />
                       ))}
                     </div>
+                  )}
+                  {passo.informacoesExtras && (
+                    <p className="whitespace-pre-line text-sm text-gray-dark">
+                      {passo.informacoesExtras}
+                    </p>
                   )}
                 </div>
               </li>
@@ -86,6 +102,29 @@ export function PassoAPasso({ passos }: PassoAPassoProps) {
             <ChevronIcon direction="up" />
             Ocultar passo a passo
           </button>
+        </div>
+      )}
+
+      {imagemAmpliada && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          onClick={() => setImagemAmpliada(null)}
+        >
+          <button
+            type="button"
+            onClick={() => setImagemAmpliada(null)}
+            aria-label="Fechar"
+            className="absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
+          >
+            ✕
+          </button>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={imagemAmpliada}
+            alt="Imagem ampliada"
+            onClick={(e) => e.stopPropagation()}
+            className="max-h-[90vh] max-w-[90vw] cursor-zoom-out rounded-lg object-contain"
+          />
         </div>
       )}
     </section>

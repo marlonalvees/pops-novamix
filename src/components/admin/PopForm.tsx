@@ -8,6 +8,7 @@ import type { Pop, PopImagem } from "@/types/pop";
 type PassoState = {
   id?: number;
   descricao: string;
+  informacoesExtras: string;
   imagensExistentes: PopImagem[];
   imagensRemovidas: number[];
   novasImagens: File[];
@@ -27,12 +28,21 @@ function passosIniciais(pop?: Pop): PassoState[] {
     return pop.passos.map((passo) => ({
       id: passo.id,
       descricao: passo.descricao,
+      informacoesExtras: passo.informacoesExtras ?? "",
       imagensExistentes: passo.imagens,
       imagensRemovidas: [],
       novasImagens: [],
     }));
   }
-  return [{ descricao: "", imagensExistentes: [], imagensRemovidas: [], novasImagens: [] }];
+  return [
+    {
+      descricao: "",
+      informacoesExtras: "",
+      imagensExistentes: [],
+      imagensRemovidas: [],
+      novasImagens: [],
+    },
+  ];
 }
 
 export default function PopForm({
@@ -58,7 +68,13 @@ export default function PopForm({
   function addPasso() {
     setPassos((atual) => [
       ...atual,
-      { descricao: "", imagensExistentes: [], imagensRemovidas: [], novasImagens: [] },
+      {
+        descricao: "",
+        informacoesExtras: "",
+        imagensExistentes: [],
+        imagensRemovidas: [],
+        novasImagens: [],
+      },
     ]);
   }
 
@@ -122,6 +138,7 @@ export default function PopForm({
         passosValidos.map((p) => ({
           id: p.id,
           descricao: p.descricao,
+          informacoesExtras: p.informacoesExtras.trim(),
           manterImagens: p.imagensExistentes
             .filter((img) => !p.imagensRemovidas.includes(img.id))
             .map((img) => img.id),
@@ -323,6 +340,21 @@ export default function PopForm({
                     onChange={(e) => adicionarImagens(index, e.target.files)}
                   />
                 </label>
+              </div>
+
+              <div className="mt-2 ml-10">
+                <label className="block text-xs font-medium text-gray-dark mb-1">
+                  Informações extras (opcional)
+                </label>
+                <textarea
+                  value={passo.informacoesExtras}
+                  onChange={(e) =>
+                    atualizarPasso(index, { informacoesExtras: e.target.value })
+                  }
+                  placeholder="Detalhes adicionais sobre este passo..."
+                  rows={2}
+                  className="w-full rounded-md border border-gray-base bg-white px-3 py-2 text-sm text-gray-text outline-none focus:border-orange-base focus:ring-1 focus:ring-orange-base"
+                />
               </div>
             </div>
           ))}
