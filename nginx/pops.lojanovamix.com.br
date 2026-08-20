@@ -2,8 +2,8 @@ server {
     server_name pops.lojanovamix.com.br;
 
     # Cadastro de POP envia várias imagens no mesmo multipart/form-data
-    # (até 5MB cada, validado na aplicação) - o padrão do nginx (1MB) bloquearia isso antes.
-    client_max_body_size 25m;
+    # (até 15MB cada, validado na aplicação) - o padrão do nginx (1MB) bloquearia isso antes.
+    client_max_body_size 60m;
 
     location / {
         proxy_pass http://127.0.0.1:3008;

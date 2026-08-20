@@ -61,7 +61,7 @@ export async function parsePopFormData(
       throw new Error(`Tipo de imagem não suportado: ${file.name}`);
     }
     if (file.size > TAMANHO_MAXIMO_IMAGEM) {
-      throw new Error(`Imagem muito grande (máx. 5MB): ${file.name}`);
+      throw new Error(`Imagem muito grande (máx. 15MB): ${file.name}`);
     }
 
     return { passoIndex: indicesPasso[indice] ?? 0, file };
