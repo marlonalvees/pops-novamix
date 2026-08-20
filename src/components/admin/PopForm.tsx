@@ -238,12 +238,12 @@ export default function PopForm({
 
       <div>
         <label className="block text-sm font-medium text-gray-text mb-1">
-          Link do vídeo (YouTube) — opcional
+          Link do vídeo (YouTube ou Google Drive) — opcional
         </label>
         <Input
           value={videoUrl}
           onChange={(e) => setVideoUrl(e.target.value)}
-          placeholder="https://www.youtube.com/watch?v=..."
+          placeholder="https://www.youtube.com/watch?v=... ou https://drive.google.com/file/d/..."
           type="url"
         />
       </div>

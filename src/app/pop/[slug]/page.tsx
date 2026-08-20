@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPopBySlug } from "@/lib/pops-repository";
-import { getYoutubeEmbedUrl } from "@/lib/youtube";
+import { getVideoEmbedUrl } from "@/lib/video";
 
 type PopPageProps = {
   params: Promise<{ slug: string }>;
@@ -15,7 +15,7 @@ export default async function PopPage({ params }: PopPageProps) {
     notFound();
   }
 
-  const embedUrl = pop.videoUrl ? getYoutubeEmbedUrl(pop.videoUrl) : null;
+  const embedUrl = pop.videoUrl ? getVideoEmbedUrl(pop.videoUrl) : null;
 
   return (
     <main className="flex-1 w-full max-w-3xl mx-auto px-6 py-10">
