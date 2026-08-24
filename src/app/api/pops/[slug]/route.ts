@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAuthPayload } from "@/lib/auth";
+import { getAuthPayload, isPopsAdmin } from "@/lib/auth";
 import { deletePop, getPopBySlug, updatePop } from "@/lib/pops-repository";
 import { parsePopFormData } from "@/lib/pop-form-data";
 import { ForbiddenError, PopNotFoundError } from "@/lib/errors";
@@ -8,7 +8,11 @@ type RouteParams = { params: Promise<{ slug: string }> };
 
 export async function GET(_req: NextRequest, { params }: RouteParams) {
   const { slug } = await params;
-  const pop = await getPopBySlug(slug);
+  const payload = await getAuthPayload();
+  const pop = await getPopBySlug(slug, {
+    isAdmin: isPopsAdmin(payload),
+    viewerSector: payload?.sector?.name ?? null,
+  });
   if (!pop) return NextResponse.json({ error: "POP não encontrado." }, { status: 404 });
   return NextResponse.json(pop);
 }

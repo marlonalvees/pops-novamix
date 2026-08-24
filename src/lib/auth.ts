@@ -64,3 +64,18 @@ export function canManageCategoria(
   if (payload!.role === "admin") return true;
   return payload!.sector?.name === categoriaNome;
 }
+
+/**
+ * POP privado só é visível para quem está logado e é do mesmo setor
+ * (setor e categoria são o mesmo valor, ver canManageCategoria), ou para
+ * um admin do módulo POPs. POP público é sempre visível.
+ */
+export function canViewPop(
+  payload: TokenPayload | null,
+  pop: { privado: boolean; categoria: string }
+): boolean {
+  if (!pop.privado) return true;
+  if (!payload) return false;
+  if (isPopsAdmin(payload)) return true;
+  return payload.sector?.name === pop.categoria;
+}

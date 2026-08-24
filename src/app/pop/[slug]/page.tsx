@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getAuthPayload, isPopsAdmin } from "@/lib/auth";
 import { getPopBySlug } from "@/lib/pops-repository";
 import { getYoutubeEmbedUrl } from "@/lib/youtube";
 
@@ -9,7 +10,11 @@ type PopPageProps = {
 
 export default async function PopPage({ params }: PopPageProps) {
   const { slug } = await params;
-  const pop = await getPopBySlug(slug);
+  const payload = await getAuthPayload();
+  const pop = await getPopBySlug(slug, {
+    isAdmin: isPopsAdmin(payload),
+    viewerSector: payload?.sector?.name ?? null,
+  });
 
   if (!pop) {
     notFound();

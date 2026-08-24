@@ -45,6 +45,7 @@ export default function PopForm({
 }: PopFormProps) {
   const [titulo, setTitulo] = useState(initialValues?.titulo ?? "");
   const [categoria, setCategoria] = useState(categoriaFixa ?? initialValues?.categoria ?? "");
+  const [privado, setPrivado] = useState(initialValues?.privado ?? false);
   const [tagsSelecionadas, setTagsSelecionadas] = useState<string[]>(initialValues?.tags ?? []);
   const [novaTag, setNovaTag] = useState("");
   const [videoUrl, setVideoUrl] = useState(initialValues?.videoUrl ?? "");
@@ -114,6 +115,7 @@ export default function PopForm({
     const formData = new FormData();
     formData.append("titulo", titulo);
     formData.append("categoria", categoria);
+    formData.append("privado", String(privado));
     formData.append("tags", tagsSelecionadas.join(","));
     formData.append("videoUrl", videoUrl);
     formData.append(
@@ -186,6 +188,22 @@ export default function PopForm({
             ))}
           </select>
         )}
+      </div>
+
+      <div>
+        <label className="flex items-center gap-2 text-sm font-medium text-gray-text">
+          <input
+            type="checkbox"
+            checked={privado}
+            onChange={(e) => setPrivado(e.target.checked)}
+            className="h-4 w-4 rounded border-gray-base text-orange-base focus:ring-orange-base"
+          />
+          POP privado
+        </label>
+        <p className="mt-1 text-xs text-gray-dark">
+          Visível apenas para usuários logados do setor {categoria || "selecionado"} e
+          administradores. Deixe desmarcado para manter público.
+        </p>
       </div>
 
       <div>

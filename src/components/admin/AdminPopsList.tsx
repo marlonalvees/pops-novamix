@@ -43,7 +43,19 @@ export default function AdminPopsList({ pops }: AdminPopsListProps) {
           <tbody>
             {filtrados.map((pop) => (
               <tr key={pop.slug} className="border-b border-gray-base/10 last:border-0">
-                <td className="px-4 py-3 text-gray-text">{pop.titulo}</td>
+                <td className="px-4 py-3 text-gray-text">
+                  <div className="flex items-center gap-2">
+                    {pop.titulo}
+                    {pop.privado && (
+                      <span
+                        title="POP privado"
+                        className="rounded-full bg-gray-text/10 text-gray-dark text-xs font-medium px-2 py-0.5"
+                      >
+                        Privado
+                      </span>
+                    )}
+                  </div>
+                </td>
                 <td className="px-4 py-3">
                   <span className="rounded-full bg-orange-base/10 text-orange-base text-xs font-medium px-2 py-1">
                     {pop.categoria}

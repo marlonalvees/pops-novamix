@@ -8,7 +8,7 @@ export default async function AdminPage() {
   const isGlobalAdmin = payload?.role === "admin";
   const categoria = isGlobalAdmin ? undefined : payload?.sector?.name;
 
-  const pops = await listPops({ categoria, includeInactive: true });
+  const pops = await listPops({ categoria, includeInactive: true, isAdmin: true });
 
   return (
     <main className="flex-1 w-full max-w-4xl mx-auto px-6 py-10">

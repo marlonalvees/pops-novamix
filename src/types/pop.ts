@@ -15,6 +15,7 @@ export type Pop = {
   slug: string;
   titulo: string;
   categoria: string;
+  privado: boolean;
   tags: string[];
   videoUrl: string;
   passos: PopPasso[];
@@ -24,5 +25,6 @@ export type PopResumo = {
   slug: string;
   titulo: string;
   categoria: string;
+  privado: boolean;
   tags: string[];
 };

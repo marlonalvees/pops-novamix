@@ -36,6 +36,9 @@ async function migrate() {
   `);
   await pool.query(`CREATE INDEX IF NOT EXISTS idx_pops_categoria ON pops.pops(categoria_id)`);
   await pool.query(`ALTER TABLE pops.pops ADD COLUMN IF NOT EXISTS user_hub_id INT`);
+  await pool.query(
+    `ALTER TABLE pops.pops ADD COLUMN IF NOT EXISTS privado BOOLEAN NOT NULL DEFAULT false`
+  );
 
   await pool.query(`
     CREATE TABLE IF NOT EXISTS pops.passos (

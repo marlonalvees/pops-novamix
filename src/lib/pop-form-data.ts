@@ -9,6 +9,7 @@ export type PopInputPasso = {
 export type PopInput = {
   titulo: string;
   categoria: string;
+  privado: boolean;
   tags: string[];
   videoUrl: string;
   passos: PopInputPasso[];
@@ -24,6 +25,7 @@ export async function parsePopFormData(
 ): Promise<{ dados: PopInput; arquivos: ArquivoPasso[] }> {
   const titulo = String(formData.get("titulo") ?? "").trim();
   const categoria = String(formData.get("categoria") ?? "").trim();
+  const privado = String(formData.get("privado") ?? "") === "true";
   const videoUrl = String(formData.get("videoUrl") ?? "").trim();
   const tags = String(formData.get("tags") ?? "")
     .split(",")
@@ -62,5 +64,5 @@ export async function parsePopFormData(
     return { passoIndex: indicesPasso[indice] ?? 0, file };
   });
 
-  return { dados: { titulo, categoria, tags, videoUrl, passos }, arquivos };
+  return { dados: { titulo, categoria, privado, tags, videoUrl, passos }, arquivos };
 }

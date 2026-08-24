@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { canManageCategoria, getAuthPayload } from "@/lib/auth";
+import { canManageCategoria, getAuthPayload, isPopsAdmin } from "@/lib/auth";
 import { createPop, listPops } from "@/lib/pops-repository";
 import { parsePopFormData } from "@/lib/pop-form-data";
 
 export async function GET(req: NextRequest) {
   const categoria = req.nextUrl.searchParams.get("categoria") ?? undefined;
-  const pops = await listPops({ categoria });
+  const payload = await getAuthPayload();
+  const pops = await listPops({
+    categoria,
+    isAdmin: isPopsAdmin(payload),
+    viewerSector: payload?.sector?.name ?? null,
+  });
   return NextResponse.json(pops);
 }
 

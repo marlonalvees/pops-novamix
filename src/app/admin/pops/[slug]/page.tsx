@@ -10,7 +10,7 @@ type EditPopPageProps = {
 
 export default async function EditPopPage({ params }: EditPopPageProps) {
   const { slug } = await params;
-  const pop = await getPopBySlug(slug, { includeInactive: true });
+  const pop = await getPopBySlug(slug, { includeInactive: true, isAdmin: true });
 
   if (!pop) {
     notFound();

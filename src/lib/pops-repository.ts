@@ -20,7 +20,12 @@ export async function listTags() {
 }
 
 export async function listPops(
-  opts: { categoria?: string; includeInactive?: boolean } = {}
+  opts: {
+    categoria?: string;
+    includeInactive?: boolean;
+    isAdmin?: boolean;
+    viewerSector?: string | null;
+  } = {}
 ): Promise<PopResumo[]> {
   const condicoes: string[] = [];
   const params: unknown[] = [];
@@ -30,11 +35,19 @@ export async function listPops(
     params.push(opts.categoria);
     condicoes.push(`c.nome = $${params.length}`);
   }
+  if (!opts.isAdmin) {
+    if (opts.viewerSector) {
+      params.push(opts.viewerSector);
+      condicoes.push(`(p.privado = false OR c.nome = $${params.length})`);
+    } else {
+      condicoes.push(`p.privado = false`);
+    }
+  }
 
   const where = condicoes.length ? `WHERE ${condicoes.join(" AND ")}` : "";
 
   const result = await db.query(
-    `SELECT p.slug, p.titulo, c.nome AS categoria,
+    `SELECT p.slug, p.titulo, c.nome AS categoria, p.privado,
             COALESCE(array_agg(t.nome) FILTER (WHERE t.nome IS NOT NULL), '{}') AS tags
      FROM pops.pops p
      JOIN pops.categorias c ON c.id = p.categoria_id
@@ -51,12 +64,16 @@ export async function listPops(
 
 export async function getPopBySlug(
   slug: string,
-  opts: { includeInactive?: boolean } = {}
+  opts: {
+    includeInactive?: boolean;
+    isAdmin?: boolean;
+    viewerSector?: string | null;
+  } = {}
 ): Promise<Pop | null> {
   const condicaoStatus = opts.includeInactive ? "" : "AND p.status = true";
 
   const popResult = await db.query(
-    `SELECT p.id, p.slug, p.titulo, c.nome AS categoria, p.video_url
+    `SELECT p.id, p.slug, p.titulo, c.nome AS categoria, p.privado, p.video_url
      FROM pops.pops p
      JOIN pops.categorias c ON c.id = p.categoria_id
      WHERE p.slug = $1 ${condicaoStatus}`,
@@ -64,6 +81,10 @@ export async function getPopBySlug(
   );
   if (popResult.rows.length === 0) return null;
   const popRow = popResult.rows[0];
+
+  if (!opts.isAdmin && popRow.privado && popRow.categoria !== opts.viewerSector) {
+    return null;
+  }
 
   const tagsResult = await db.query(
     `SELECT t.nome
@@ -107,6 +128,7 @@ export async function getPopBySlug(
     slug: popRow.slug,
     titulo: popRow.titulo,
     categoria: popRow.categoria,
+    privado: popRow.privado,
     tags: tagsResult.rows.map((r) => r.nome),
     videoUrl: popRow.video_url ?? "",
     passos: passosResult.rows.map((p) => ({
@@ -175,9 +197,9 @@ export async function createPop(
     slug = await gerarSlugUnico(client, input.titulo);
 
     const popResult = await client.query(
-      `INSERT INTO pops.pops (slug, titulo, categoria_id, video_url, user_hub_id)
-       VALUES ($1, $2, $3, $4, $5) RETURNING id`,
-      [slug, input.titulo, categoria.id, input.videoUrl || null, userHubId]
+      `INSERT INTO pops.pops (slug, titulo, categoria_id, video_url, user_hub_id, privado)
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
+      [slug, input.titulo, categoria.id, input.videoUrl || null, userHubId, input.privado]
     );
     const popId = popResult.rows[0].id;
 
@@ -253,9 +275,9 @@ export async function updatePop(
     const categoria = await resolveCategoriaId(client, input.categoria);
 
     await client.query(
-      `UPDATE pops.pops SET titulo = $1, categoria_id = $2, video_url = $3, updated_at = NOW()
-       WHERE id = $4`,
-      [input.titulo, categoria.id, input.videoUrl || null, popId]
+      `UPDATE pops.pops SET titulo = $1, categoria_id = $2, video_url = $3, privado = $4, updated_at = NOW()
+       WHERE id = $5`,
+      [input.titulo, categoria.id, input.videoUrl || null, input.privado, popId]
     );
 
     await client.query(`DELETE FROM pops.pop_tags WHERE pop_id = $1`, [popId]);
