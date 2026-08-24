@@ -3,6 +3,7 @@ import { TAMANHO_MAXIMO_IMAGEM, TIPOS_IMAGEM_PERMITIDOS } from "@/lib/storage";
 export type PopInputPasso = {
   id?: number;
   descricao: string;
+  informacoesExtras?: string;
   manterImagens?: number[];
 };
 
@@ -43,7 +44,11 @@ export async function parsePopFormData(
   if (!categoria) throw new Error("Categoria é obrigatória.");
 
   const passos = passosBrutos
-    .map((passo) => ({ ...passo, descricao: passo.descricao?.trim() ?? "" }))
+    .map((passo) => ({
+      ...passo,
+      descricao: passo.descricao?.trim() ?? "",
+      informacoesExtras: passo.informacoesExtras?.trim() || undefined,
+    }))
     .filter((passo) => passo.descricao);
 
   if (passos.length === 0) throw new Error("Informe ao menos um passo.");
@@ -58,7 +63,7 @@ export async function parsePopFormData(
       throw new Error(`Tipo de imagem não suportado: ${file.name}`);
     }
     if (file.size > TAMANHO_MAXIMO_IMAGEM) {
-      throw new Error(`Imagem muito grande (máx. 5MB): ${file.name}`);
+      throw new Error(`Imagem muito grande (máx. 15MB): ${file.name}`);
     }
 
     return { passoIndex: indicesPasso[indice] ?? 0, file };

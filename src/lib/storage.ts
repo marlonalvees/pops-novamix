@@ -12,7 +12,7 @@ const EXTENSOES_POR_TIPO: Record<string, string> = {
 };
 
 export const TIPOS_IMAGEM_PERMITIDOS = new Set(Object.keys(EXTENSOES_POR_TIPO));
-export const TAMANHO_MAXIMO_IMAGEM = 5 * 1024 * 1024;
+export const TAMANHO_MAXIMO_IMAGEM = 15 * 1024 * 1024;
 
 function pastaDoPop(popSlug: string) {
   return path.join(IMAGENS_ROOT, popSlug);

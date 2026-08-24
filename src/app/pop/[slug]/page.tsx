@@ -2,7 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAuthPayload, isPopsAdmin } from "@/lib/auth";
 import { getPopBySlug } from "@/lib/pops-repository";
-import { getYoutubeEmbedUrl } from "@/lib/youtube";
+import { getVideoEmbedUrl } from "@/lib/video";
+import { PassoAPasso } from "@/components/pop/PassoAPasso";
 
 type PopPageProps = {
   params: Promise<{ slug: string }>;
@@ -20,7 +21,7 @@ export default async function PopPage({ params }: PopPageProps) {
     notFound();
   }
 
-  const embedUrl = pop.videoUrl ? getYoutubeEmbedUrl(pop.videoUrl) : null;
+  const embedUrl = pop.videoUrl ? getVideoEmbedUrl(pop.videoUrl) : null;
 
   return (
     <main className="flex-1 w-full max-w-3xl mx-auto px-6 py-10">
@@ -56,38 +57,7 @@ export default async function PopPage({ params }: PopPageProps) {
         </p>
       )}
 
-      <section className="mt-8">
-        <h2 className="text-lg font-semibold text-gray-text mb-3">
-          Passo a passo
-        </h2>
-        <ol className="flex flex-col gap-4">
-          {pop.passos.map((passo, index) => (
-            <li key={passo.id ?? index} className="flex gap-3">
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-orange-base text-white text-xs font-semibold">
-                {index + 1}
-              </span>
-              <div className="flex flex-col gap-2">
-                <span className="text-sm text-gray-text pt-0.5">
-                  {passo.descricao}
-                </span>
-                {passo.imagens.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                    {passo.imagens.map((imagem) => (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        key={imagem.id}
-                        src={imagem.url}
-                        alt={imagem.legenda ?? `Imagem do passo ${index + 1}`}
-                        className="h-28 w-28 rounded-lg object-cover border border-gray-base/20"
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-            </li>
-          ))}
-        </ol>
-      </section>
+      <PassoAPasso passos={pop.passos} />
     </main>
   );
 }

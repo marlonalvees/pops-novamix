@@ -49,6 +49,9 @@ async function migrate() {
       UNIQUE (pop_id, ordem)
     )
   `);
+  await pool.query(
+    `ALTER TABLE pops.passos ADD COLUMN IF NOT EXISTS informacoes_extras TEXT`
+  );
 
   await pool.query(`
     CREATE TABLE IF NOT EXISTS pops.passo_imagens (
