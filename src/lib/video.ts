@@ -8,7 +8,8 @@ export function getVideoEmbedUrl(url: string): string | null {
     }
 
     if (parsed.hostname.includes("youtube.com")) {
-      const videoId = parsed.searchParams.get("v");
+      const shortsId = parsed.pathname.match(/\/shorts\/([^/]+)/)?.[1];
+      const videoId = shortsId ?? parsed.searchParams.get("v");
       return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
     }
 
